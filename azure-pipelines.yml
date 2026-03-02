@@ -1,0 +1,97 @@
+# Copyright (c) .NET Foundation and Contributors
+# See LICENSE file in the project root for full license information.
+
+trigger:
+  branches:
+    include:
+      - main
+      - develop
+
+  paths:
+    exclude:
+      - .gitignore
+      - .gitattributes
+      - .gitmodules
+      - .github/*
+      - LICENSE.md
+      - README.md
+      - NuGet.Config
+      - assets/*
+      - UnitsNet/*
+
+  tags:
+    include:
+      - v*
+
+# PR always trigger build
+pr:
+  autoCancel: true
+
+# add nf-tools repo to resources (for Azure Pipelines templates)
+resources:
+  repositories:
+    - repository: templates
+      type: github
+
+variables:
+  - name: DOTNET_NOLOGO
+    value: true  
+    
+jobs:
+
+##############################
+- job: Build_unitsnet
+  condition: >-
+    and(
+      not(startsWith(variables['Build.SourceBranch'], 'refs/tags/v')),
+      or(
+        eq(variables['UPDATE_DEPENDENTS'], 'false'),
+        eq(variables['StartReleaseCandidate'], 'true')
+      )
+    )
+
+  pool:
+    vmImage: 'windows-latest'
+
+  variables:
+    - group: sign-client-credentials
+    - name: buildPlatform
+      value: 'Any CPU'  
+    - name: buildConfiguration
+      value: 'Release'
+
+  steps:
+
+  - checkout: self
+    fetchDepth: 1
+    submodules: true
+
+  - task: InstallNanoMSBuildComponents@1
+    displayName: Install .NET nanoFramework MSBuild components
+
+##################################
+# report build failure to Discord
+- job: Report_Build_Failure
+
+  dependsOn:
+  - Build_unitsnet
+  condition: >-
+    or(
+      failed('Build_unitsnet')
+    )
+
+  pool:
+    vmImage: 'windows-latest'
+
+  steps:
+
+  - checkout: self
+    fetchDepth: 1
+
+  # step from template @ nf-tools repo
+  # report error
+  - template: azure-pipelines-templates/discord-webhook-task.yml@templates  
+    parameters:
+      status: 'failure'
+      webhookUrl: '$(DiscordWebhook)'
+      message: ''
