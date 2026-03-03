@@ -37,6 +37,7 @@ namespace CodeGen.Generators.NanoFrameworkGen
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Adds {_quantity.Name} units for Units.NET on .NET nanoFramework. For .NET or .NET Core, use UnitsNet instead.</description>
     <icon>images\logo-128.png</icon>
+    <readme>README.md</readme>
     <releaseNotes>
     </releaseNotes>
     <copyright>Copyright (c) .NET Foundation and Contributors</copyright>
@@ -56,6 +57,7 @@ namespace CodeGen.Generators.NanoFrameworkGen
     </dependencies>
   </metadata>
   <files>
+    <file src=""..\..\..\README.md"" target="""" />
     <file src=""..\..\..\assets\readme.txt"" target="""" />
     <file src=""..\..\..\LICENSE.md"" target="""" />
     <file src=""..\..\..\UnitsNet\Docs\Images\logo-128.png"" target=""images\"" />
