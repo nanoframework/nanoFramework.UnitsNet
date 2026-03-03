@@ -36,62 +36,123 @@ resources:
 variables:
   - name: DOTNET_NOLOGO
     value: true  
-    
-jobs:
+  - group: sign-client-credentials
+  - name: buildPlatform
+    value: 'Any CPU'  
+  - name: buildConfiguration
+    value: 'Release'
+  - name: solution
+    value: 'nanoFramework.UnitsNet.sln'  
 
-##############################
-- job: Build_unitsnet
+pool:
+  vmImage: 'windows-latest'
+
+steps:
+
+- checkout: self
+  fetchDepth: 1
+  submodules: true
+
+- template: azure-pipelines-templates/class-lib-build-only.yml@templates
+  parameters:
+    skipSonarCloudAnalysis: true
+    runUnitTests: false
+
+- powershell: |
+    $generatedCodePath = "$(Build.SourcesDirectory)\nanoFramework.UnitsNet\GeneratedCode"
+
+    Get-ChildItem -Path $generatedCodePath -Directory | ForEach-Object {
+        $nuspec = Get-ChildItem -Path $_.FullName -Filter "*.nuspec" -File | Select-Object -First 1
+
+        if ($nuspec) {
+            Write-Host "Packing $($nuspec.Name)..."
+            nuget pack $nuspec.FullName -Version $(MY_NUGET_VERSION) -Symbols -SymbolPackageFormat snupkg -OutputDirectory "$(Build.ArtifactStagingDirectory)"
+            if ($LASTEXITCODE -ne 0) {
+                Write-Error "Failed to pack $($nuspec.Name)"
+                exit 1
+            }
+        }
+    }
   condition: >-
     and(
-      not(startsWith(variables['Build.SourceBranch'], 'refs/tags/v')),
-      or(
-        eq(variables['UPDATE_DEPENDENTS'], 'false'),
-        eq(variables['StartReleaseCandidate'], 'true')
-      )
+      succeeded(),
+      eq(variables['StartReleaseCandidate'], false)
     )
+  displayName: Package UnitsNet
 
-  pool:
-    vmImage: 'windows-latest'
-
-  variables:
-    - group: sign-client-credentials
-    - name: buildPlatform
-      value: 'Any CPU'  
-    - name: buildConfiguration
-      value: 'Release'
-
-  steps:
-
-  - checkout: self
-    fetchDepth: 1
-    submodules: true
-
-  - task: InstallNanoMSBuildComponents@1
-    displayName: Install .NET nanoFramework MSBuild components
-
-##################################
-# report build failure to Discord
-- job: Report_Build_Failure
-
-  dependsOn:
-  - Build_unitsnet
+- task: DotNetCoreCLI@2
+  displayName: Install Sign Client CLI
   condition: >-
-    or(
-      failed('Build_unitsnet')
+    and(
+      succeeded(),
+      eq(variables['StartReleaseCandidate'], false),
+      not(startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
+    )
+  inputs:
+    command: custom
+    custom: tool
+    arguments: install --tool-path . sign --version 0.9.1-beta.23530.1
+
+- pwsh: |
+    .\sign code azure-key-vault `
+    "**/*.nupkg" `
+    --base-directory "$(Build.ArtifactStagingDirectory)" `
+    --description "$(Build.Repository.Name)" `
+    --description-url "https://github.com/$(Build.Repository.Name)" `
+    --azure-key-vault-tenant-id "$(SignTenantId)" `
+    --azure-key-vault-client-id "$(SignClientId)" `
+    --azure-key-vault-client-secret "$(SignClientSecret)" `
+    --azure-key-vault-certificate "$(SignKeyVaultCertificate)" `
+    --azure-key-vault-url "$(SignKeyVaultUrl)" `
+    --timestamp-url http://timestamp.digicert.com
+  displayName: Sign packages
+  continueOnError: true
+  condition: >-
+    and(
+      succeeded(),
+      eq(variables['StartReleaseCandidate'], false),
+      not(startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
     )
 
-  pool:
-    vmImage: 'windows-latest'
+# publish artifacts (only possible if this is not a PR originated on a fork)
+- task: PublishPipelineArtifact@1
+  inputs:
+    targetPath: '$(Build.ArtifactStagingDirectory)'
+    artifactName: deployables
+    artifactType: pipeline
+  condition: >-
+    and(
+      succeeded(),
+      eq(variables['StartReleaseCandidate'], false),
+      not(startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
+    )
+  displayName: Publish deployables artifacts
 
-  steps:
+# push NuGet class lib package to NuGet (happens on every build except PRs)
+- task: NuGetCommand@2
+  condition: >-
+    and(
+      succeeded(),
+      eq(variables['System.PullRequest.PullRequestId'], ''),
+      not(startsWith(variables['Build.SourceBranch'], 'refs/pull/')),
+      eq(variables['StartReleaseCandidate'], false),
+      not(startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
+    )
+  continueOnError: true
+  displayName: Push NuGet packages to NuGet
+  inputs:
+    command: push
+    nuGetFeedType: external
+    allowPackageConflicts: true
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+    includeSymbols: true
+    publishFeedCredentials: 'NuGet-$(System.TeamProject)'
 
-  - checkout: self
-    fetchDepth: 1
-
-  # step from template @ nf-tools repo
-  # report error
-  - template: azure-pipelines-templates/discord-webhook-task.yml@templates  
-    parameters:
-      status: 'failure'
-      webhookUrl: '$(DiscordWebhook)'
-      message: ''
+# step from template @ nf-tools repo
+# report error
+- template: azure-pipelines-templates/discord-webhook-task.yml@templates  
+  parameters:
+    workingDirectory: 'nanoFramework.IoT.Device'
+    status: 'failure'
+    webhookUrl: '$(DiscordWebhook)'
+    message: ''
