@@ -1,0 +1,64 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\UnitsNet\CodeGen\Exceptions\UnitsNetCodeGenException.cs" Link="Exceptions\UnitsNetCodeGenException.cs" />
+    <Compile Include="..\..\UnitsNet\CodeGen\Generators\GeneratorBase.cs" Link="Generators\GeneratorBase.cs" />
+    <Compile Include="..\..\UnitsNet\CodeGen\Generators\NanoFrameworkGenerator.cs" Link="Generators\NanoFrameworkGenerator.cs" />
+    <Compile Include="..\..\UnitsNet\CodeGen\Generators\NanoFrameworkVersions.cs" Link="Generators\NanoFrameworkVersions.cs" />
+    <Compile Include="..\..\UnitsNet\CodeGen\Generators\QuantityJsonFilesParser.cs" Link="Generators\QuantityJsonFilesParser.cs" />
+    <Compile Include="..\..\UnitsNet\CodeGen\Generators\QuantityRelationsParser.cs" Link="Generators\QuantityRelationsParser.cs" />
+    <Compile Include="..\..\UnitsNet\CodeGen\Generators\UnitsNetGenerator.cs" Link="Generators\UnitsNetGenerator.cs" />
+    <Compile Include="..\..\UnitsNet\CodeGen\Generators\UnitsNetGen\IQuantityTestClassGenerator.cs" Link="Generators\UnitsNetGen\IQuantityTestClassGenerator.cs" />
+    <Compile Include="..\..\UnitsNet\CodeGen\Generators\UnitsNetGen\NumberExtensionsCS14Generator.cs" Link="Generators\UnitsNetGen\NumberExtensionsCS14Generator.cs" />
+    <Compile Include="..\..\UnitsNet\CodeGen\Generators\UnitsNetGen\NumberExtensionsCS14TestClassGenerator.cs" Link="Generators\UnitsNetGen\NumberExtensionsCS14TestClassGenerator.cs" />
+    <Compile Include="..\..\UnitsNet\CodeGen\Generators\UnitsNetGen\NumberExtensionsGenerator.cs" Link="Generators\UnitsNetGen\NumberExtensionsGenerator.cs" />
+    <Compile Include="..\..\UnitsNet\CodeGen\Generators\UnitsNetGen\NumberExtensionsTestClassGenerator.cs" Link="Generators\UnitsNetGen\NumberExtensionsTestClassGenerator.cs" />
+    <Compile Include="..\..\UnitsNet\CodeGen\Generators\UnitsNetGen\QuantityGenerator.cs" Link="Generators\UnitsNetGen\QuantityGenerator.cs" />
+    <Compile Include="..\..\UnitsNet\CodeGen\Generators\UnitsNetGen\StaticQuantityGenerator.cs" Link="Generators\UnitsNetGen\StaticQuantityGenerator.cs" />
+    <Compile Include="..\..\UnitsNet\CodeGen\Generators\UnitsNetGen\UnitTestBaseClassGenerator.cs" Link="Generators\UnitsNetGen\UnitTestBaseClassGenerator.cs" />
+    <Compile Include="..\..\UnitsNet\CodeGen\Generators\UnitsNetGen\UnitTestStubGenerator.cs" Link="Generators\UnitsNetGen\UnitTestStubGenerator.cs" />
+    <Compile Include="..\..\UnitsNet\CodeGen\Generators\UnitsNetGen\UnitTypeGenerator.cs" Link="Generators\UnitsNetGen\UnitTypeGenerator.cs" />
+    <Compile Include="..\..\UnitsNet\CodeGen\Helpers\FileInfoExtensions.cs" Link="Helpers\FileInfoExtensions.cs" />
+    <Compile Include="..\..\UnitsNet\CodeGen\Helpers\HashGuid.cs" Link="Helpers\HashGuid.cs" />
+    <Compile Include="..\..\UnitsNet\CodeGen\Helpers\MyTextWriter.cs" Link="Helpers\MyTextWriter.cs" />
+    <Compile Include="..\..\UnitsNet\CodeGen\Helpers\PrefixBuilder\BaseUnitPrefix.cs" Link="Helpers\PrefixBuilder\BaseUnitPrefix.cs" />
+    <Compile Include="..\..\UnitsNet\CodeGen\Helpers\PrefixBuilder\BaseUnitPrefixes.cs" Link="Helpers\PrefixBuilder\BaseUnitPrefixes.cs" />
+    <Compile Include="..\..\UnitsNet\CodeGen\Helpers\PrefixBuilder\PrefixBuilderExtensions.cs" Link="Helpers\PrefixBuilder\PrefixBuilderExtensions.cs" />
+    <Compile Include="..\..\UnitsNet\CodeGen\Helpers\PrefixBuilder\UnitPrefixBuilder.cs" Link="Helpers\PrefixBuilder\UnitPrefixBuilder.cs" />
+    <Compile Include="..\..\UnitsNet\CodeGen\Helpers\StringExtensions.cs" Link="Helpers\StringExtensions.cs" />
+    <Compile Include="..\..\UnitsNet\CodeGen\Helpers\UnitEnumValueAllocation\QuantityNameToUnitEnumValues.cs" Link="Helpers\UnitEnumValueAllocation\QuantityNameToUnitEnumValues.cs" />
+    <Compile Include="..\..\UnitsNet\CodeGen\Helpers\UnitEnumValueAllocation\UnitEnumValueAllocator.cs" Link="Helpers\UnitEnumValueAllocation\UnitEnumValueAllocator.cs" />
+    <Compile Include="..\..\UnitsNet\CodeGen\Helpers\UnitEnumValueAllocation\UnitEnumValues.cs" Link="Helpers\UnitEnumValueAllocation\UnitEnumValues.cs" />
+    <Compile Include="..\..\UnitsNet\CodeGen\JsonTypes\BaseDimensions.cs" Link="JsonTypes\BaseDimensions.cs" />
+    <Compile Include="..\..\UnitsNet\CodeGen\JsonTypes\BaseUnits.cs" Link="JsonTypes\BaseUnits.cs" />
+    <Compile Include="..\..\UnitsNet\CodeGen\JsonTypes\Localization.cs" Link="JsonTypes\Localization.cs" />
+    <Compile Include="..\..\UnitsNet\CodeGen\JsonTypes\Prefix.cs" Link="JsonTypes\Prefix.cs" />
+    <Compile Include="..\..\UnitsNet\CodeGen\JsonTypes\Quantity.cs" Link="JsonTypes\Quantity.cs" />
+    <Compile Include="..\..\UnitsNet\CodeGen\JsonTypes\QuantityRelation.cs" Link="JsonTypes\QuantityRelation.cs" />
+    <Compile Include="..\..\UnitsNet\CodeGen\JsonTypes\Unit.cs" Link="JsonTypes\Unit.cs" />
+    <Compile Include="..\..\UnitsNet\CodeGen\PrefixInfo.cs" Link="PrefixInfo.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Net4x.Serilog.Sinks.Console" Version="4.2.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="NuGet.Protocol" Version="7.3.0" />
+    <PackageReference Include="System.CommandLine" Version="2.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Exceptions\" />
+    <Folder Include="Generators\UnitsNetGen\" />
+    <Folder Include="Helpers\UnitEnumValueAllocation\" />
+    <Folder Include="Helpers\PrefixBuilder\" />
+    <Folder Include="JsonTypes\" />
+  </ItemGroup>
+
+</Project>
