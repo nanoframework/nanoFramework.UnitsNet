@@ -62,7 +62,8 @@ namespace CodeGen.Generators
             logger.LogInformation($"Referencing nanoFramework.CoreLibrary {versions.MscorlibNugetVersion}");
             logger.LogInformation($"Referencing nanoFramework.System.Math {versions.MathNugetVersion}");
 
-            var outputDir = Path.Combine(nanoRoot, "nanoFramework.UnitsNet", "GeneratedCode");
+            var genCodePath = "nanoFramework.UnitsNet\\GeneratedCode";
+            var outputDir = Path.Combine(nanoRoot, genCodePath);
             var outputQuantities = Path.Combine(outputDir, "Quantities");
             var outputUnits = Path.Combine(outputDir, "Units");
             var outputProperties = Path.Combine(outputDir, "Properties");
@@ -102,7 +103,10 @@ namespace CodeGen.Generators
             Log.Information("");
 
             GenerateProperties(Path.Combine(outputProperties, "AssemblyInfo.cs"));
-            GenerateSolution(quantities, outputDir);
+            GenerateSolution(
+                quantities,
+                nanoRoot,
+                genCodePath);
 
             var unitCount = quantities.SelectMany(q => q.Units).Count();
             Log.Information("");
@@ -384,10 +388,14 @@ namespace CodeGen.Generators
             Directory.CreateDirectory(Path.Combine(Path.GetDirectoryName(filePath), "Properties"));
         }
 
-        private static void GenerateSolution(Quantity[] quantities, string outputDir)
+        private static void GenerateSolution(
+            Quantity[] quantities,
+            string nanoRoot,
+            string genCodePath)
         {
-            var content = new SolutionGenerator(quantities).Generate();
-            var filePath = Path.Combine(outputDir, "nanoFramework.UnitsNet.sln");
+            var content = new SolutionGenerator(quantities, genCodePath).Generate();
+
+            var filePath = Path.Combine(nanoRoot, "nanoFramework.UnitsNet.sln");
 
             File.WriteAllText(filePath, content);
             Log.Information("✅ nanoFramework.UnitsNet.sln");

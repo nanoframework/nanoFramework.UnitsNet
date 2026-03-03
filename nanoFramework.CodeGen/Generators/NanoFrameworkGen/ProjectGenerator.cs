@@ -23,7 +23,7 @@ namespace CodeGen.Generators.NanoFrameworkGen
         {
             Writer.WL($@"<?xml version=""1.0"" encoding=""utf-8""?>
 <Project ToolsVersion=""15.0"" DefaultTargets=""Build"" xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-  <Import Project=""..\packages\Nerdbank.GitVersioning.{_versions.NbgvNugetVersion}\build\Nerdbank.GitVersioning.props"" Condition=""Exists('..\packages\Nerdbank.GitVersioning.{_versions.NbgvNugetVersion}\build\Nerdbank.GitVersioning.props')"" />
+  <Import Project=""..\..\..\packages\Nerdbank.GitVersioning.{_versions.NbgvNugetVersion}\build\Nerdbank.GitVersioning.props"" Condition=""Exists('..\..\..\packages\Nerdbank.GitVersioning.{_versions.NbgvNugetVersion}\build\Nerdbank.GitVersioning.props')"" />
   <PropertyGroup Label=""Globals"">
     <NanoFrameworkProjectSystemPath>$(MSBuildExtensionsPath)\nanoFramework\v1.0\</NanoFrameworkProjectSystemPath>
   </PropertyGroup>
@@ -49,7 +49,7 @@ namespace CodeGen.Generators.NanoFrameworkGen
   </ItemGroup>
   <ItemGroup>
     <Reference Include=""mscorlib, Version={_versions.MscorlibVersion}, Culture=neutral, PublicKeyToken=c07d481e9758c731"">
-      <HintPath>..\packages\nanoFramework.CoreLibrary.{_versions.MscorlibNugetVersion}\lib\mscorlib.dll</HintPath>
+      <HintPath>..\..\..\packages\nanoFramework.CoreLibrary.{_versions.MscorlibNugetVersion}\lib\mscorlib.dll</HintPath>
       <Private>True</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>");
@@ -58,7 +58,7 @@ namespace CodeGen.Generators.NanoFrameworkGen
             {
                 Writer.WL($@"
     <Reference Include=""System.Math, Version={_versions.MathVersion}, Culture=neutral, PublicKeyToken=c07d481e9758c731"">
-      <HintPath>..\packages\nanoFramework.System.Math.{_versions.MathNugetVersion}\lib\System.Math.dll</HintPath>
+      <HintPath>..\..\..\packages\nanoFramework.System.Math.{_versions.MathNugetVersion}\lib\System.Math.dll</HintPath>
       <Private>True</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>");
@@ -79,10 +79,10 @@ namespace CodeGen.Generators.NanoFrameworkGen
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105.The missing file is {{0}}.</ErrorText>
     </PropertyGroup>
-    <Error Condition=""!Exists('..\packages\Nerdbank.GitVersioning.{_versions.NbgvNugetVersion}\build\Nerdbank.GitVersioning.props')"" Text=""$([System.String]::Format('$(ErrorText)', '..\packages\Nerdbank.GitVersioning.{_versions.NbgvNugetVersion}\build\Nerdbank.GitVersioning.props'))"" />
-    <Error Condition=""!Exists('..\packages\Nerdbank.GitVersioning.{_versions.NbgvNugetVersion}\build\Nerdbank.GitVersioning.targets')"" Text=""$([System.String]::Format('$(ErrorText)', '..\packages\Nerdbank.GitVersioning.{_versions.NbgvNugetVersion}\build\Nerdbank.GitVersioning.targets'))"" />
+    <Error Condition=""!Exists('..\..\..\packages\Nerdbank.GitVersioning.{_versions.NbgvNugetVersion}\build\Nerdbank.GitVersioning.props')"" Text=""$([System.String]::Format('$(ErrorText)', '..\..\..\packages\Nerdbank.GitVersioning.{_versions.NbgvNugetVersion}\build\Nerdbank.GitVersioning.props'))"" />
+    <Error Condition=""!Exists('..\..\..\packages\Nerdbank.GitVersioning.{_versions.NbgvNugetVersion}\build\Nerdbank.GitVersioning.targets')"" Text=""$([System.String]::Format('$(ErrorText)', '..\..\..\packages\Nerdbank.GitVersioning.{_versions.NbgvNugetVersion}\build\Nerdbank.GitVersioning.targets'))"" />
   </Target>
-  <Import Project=""..\packages\Nerdbank.GitVersioning.{_versions.NbgvNugetVersion}\build\Nerdbank.GitVersioning.targets"" Condition=""Exists('..\packages\Nerdbank.GitVersioning.{_versions.NbgvNugetVersion}\build\Nerdbank.GitVersioning.targets')"" />
+  <Import Project=""..\..\..\packages\Nerdbank.GitVersioning.{_versions.NbgvNugetVersion}\build\Nerdbank.GitVersioning.targets"" Condition=""Exists('..\..\..\packages\Nerdbank.GitVersioning.{_versions.NbgvNugetVersion}\build\Nerdbank.GitVersioning.targets')"" />
 
 </Project>");
 

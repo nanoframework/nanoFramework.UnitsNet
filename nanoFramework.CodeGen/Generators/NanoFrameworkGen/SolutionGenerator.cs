@@ -12,12 +12,16 @@ namespace CodeGen.Generators.NanoFrameworkGen
     class SolutionGenerator:GeneratorBase
     {
         private readonly Quantity[] _quantities;
+        private readonly string _projectPath;
         private readonly Guid _globalGuid = new("d608a2b1-6ead-4383-a205-ad1ce69d9ef7"); // Randomly generated guids.
         private readonly Guid _solutionGuid = new("43971d92-3663-4f28-82ac-e63ce06ba1a3");
 
-        public SolutionGenerator(Quantity[] quantities)
+        public SolutionGenerator(
+            Quantity[] quantities,
+            string projectPath)
         {
             _quantities = quantities;
+            _projectPath = projectPath;
         }
 
         public string Generate()
@@ -32,7 +36,7 @@ MinimumVisualStudioVersion = 10.0.40219.1");
             {
                 var projectGuid = HashGuid.ToHashGuid(quantity.Name);
                 Writer.WL($@"
-Project(""{_globalGuid:B}"") = ""{quantity.Name}"", ""{quantity.Name}\{quantity.Name}.nfproj"", ""{projectGuid:B}""
+Project(""{_globalGuid:B}"") = ""{quantity.Name}"", ""{_projectPath}\{quantity.Name}\{quantity.Name}.nfproj"", ""{projectGuid:B}""
 EndProject");
                 sb.Append($"{{{projectGuid}}}.Debug|Any CPU.ActiveCfg = Debug|Any CPU\r\n");
                 sb.Append($"{{{projectGuid}}}.Debug|Any CPU.Build.0 = Debug|Any CPU\r\n");
