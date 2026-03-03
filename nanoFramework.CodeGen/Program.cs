@@ -1,5 +1,11 @@
-﻿using CodeGen.Generators;
+﻿//
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+//
+
+using CodeGen.Generators;
 using CodeGen.Helpers.UnitEnumValueAllocation;
+using CodeGen.JsonTypes;
 using Serilog;
 using Serilog.Events;
 using System.CommandLine;
@@ -11,7 +17,7 @@ public class Program
     public static int Main(string[] args)
     {
         var verboseOption = new Option<bool>("--verbose");
-        var unitsnetRootOption = new Option<DirectoryInfo?>("--unitsnet-root");
+        var unitsnetRootOption = new Option<DirectoryInfo?>("--unitsnet-root", "Path to the root of the UnitsNet repository. If not specified, it will be auto-detected.");
 
         var rootCommand = new RootCommand("Code generation tool for nanoFramework.UnitsNet")
         {
@@ -23,17 +29,21 @@ public class Program
         {
             var verbose = parseResult.GetValue(verboseOption);
             var unitsnetRoot = parseResult.GetValue(unitsnetRootOption);
-            Run(verbose, unitsnetRoot);
+            
+            Run(
+                verbose,
+                unitsnetRoot);
+
             return 0;
         });
 
         return rootCommand.Parse(args).Invoke();
     }
 
-    private static void Run(bool verbose, DirectoryInfo? unitsnetRoot)
+    private static void Run(
+        bool verbose,
+        DirectoryInfo? unitsnetRoot)
     {
-        Console.WriteLine("Hello, World!");
-
         Log.Logger = new LoggerConfiguration()
             .WriteTo
             .Console(verbose ? LogEventLevel.Verbose : LogEventLevel.Information)
@@ -45,16 +55,31 @@ public class Program
         try
         {
             unitsnetRoot ??= FindUnitsNetRoot();
+            DirectoryInfo nanoRoot = FindNanoRoot();
 
-            var rootDir = unitsnetRoot.FullName;
+            string unitsNetRootDir = unitsnetRoot.FullName;
+            string nanoRootDir = nanoRoot.FullName;
 
-            var sw = Stopwatch.StartNew();
+            Stopwatch sw = Stopwatch.StartNew();
 
-            var quantities = QuantityJsonFilesParser.ParseQuantities(rootDir);
+            Quantity[] quantities = QuantityJsonFilesParser.ParseQuantities(unitsNetRootDir);
             
-            QuantityNameToUnitEnumValues quantityNameToUnitEnumValues = UnitEnumValueAllocator.AllocateNewUnitEnumValues($"{rootDir}/Common/UnitEnumValues.g.json", quantities);
+            QuantityNameToUnitEnumValues quantityNameToUnitEnumValues = UnitEnumValueAllocator.AllocateNewUnitEnumValues($"{unitsNetRootDir}/Common/UnitEnumValues.g.json", quantities);
 
-            NanoFrameworkGenerator.Generate(rootDir, quantities, quantityNameToUnitEnumValues);
+            QuantityRelationsParser.ParseAndApplyRelations(
+                unitsNetRootDir,
+                quantities);
+
+            UnitsNetGenerator.Generate(
+                unitsNetRootDir,
+                quantities,
+                quantityNameToUnitEnumValues);
+
+            NanoFrameworkGenerator.Generate(
+                unitsNetRootDir,
+                nanoRootDir,
+                quantities,
+                quantityNameToUnitEnumValues);
 
             Log.Information("Completed in {ElapsedMs} ms!", sw.ElapsedMilliseconds);
         }
@@ -89,5 +114,25 @@ public class Program
         }
 
         throw new Exception($"Unable to find  Units Net repository root in directory hierarchy: {executableParentDir}");
+    }
+
+    private static DirectoryInfo FindNanoRoot()
+    {
+        var executableParentDir = new DirectoryInfo(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!);
+        Log.Verbose("Executable dir: {ExecutableParentDir}", executableParentDir);
+
+        for (DirectoryInfo? dir = executableParentDir; dir != null; dir = dir.Parent)
+        {
+            if (dir.GetFiles("nanoFramework.UnitsNet.CodeGen.slnx").Any())
+            {
+                Log.Verbose("Found nanoFramework repo root: {Dir}", dir);
+
+                return dir;
+            }
+
+            Log.Verbose("Not repo root: {Dir}", dir);
+        }
+
+        throw new Exception($"Unable to find repository root in directory hierarchy: {executableParentDir}");
     }
 }

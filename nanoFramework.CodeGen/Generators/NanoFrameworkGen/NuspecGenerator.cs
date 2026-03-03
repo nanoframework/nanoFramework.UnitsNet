@@ -1,4 +1,8 @@
-using System;
+//
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+//
+
 using CodeGen.JsonTypes;
 
 namespace CodeGen.Generators.NanoFrameworkGen
@@ -42,17 +46,17 @@ namespace CodeGen.Generators.NanoFrameworkGen
     <dependencies>
       <dependency id=""nanoFramework.CoreLibrary"" version=""{_mscorlibNuGetVersion}"" />");
 
-    if (NanoFrameworkGenerator.ProjectsRequiringMath.Contains(_quantity.Name))
-    {
+            if (NanoFrameworkGenerator.ProjectsRequiringMath.Contains(_quantity.Name))
+            {
                 Writer.WL($@"
       <dependency id=""nanoFramework.System.Math"" version=""{_mathNuGetVersion}"" />");
-    }
+            }
 
             Writer.WL($@"
     </dependencies>
   </metadata>
   <files>
-    <file src=""..\..\..\Artifacts\UnitsNet.NanoFramework\{_quantity.Name}\UnitsNet.*"" target=""lib"" />
+    <file src=""..\..\..\Artifacts\UnitsNet.NanoFramework\{_quantity.Name}\UnitsNet.*"" target=""lib\netnano1.0"" />
   </files>
 </package>");
 

@@ -10,7 +10,6 @@
   <ItemGroup>
     <Compile Include="..\..\UnitsNet\CodeGen\Exceptions\UnitsNetCodeGenException.cs" Link="Exceptions\UnitsNetCodeGenException.cs" />
     <Compile Include="..\..\UnitsNet\CodeGen\Generators\GeneratorBase.cs" Link="Generators\GeneratorBase.cs" />
-    <Compile Include="..\..\UnitsNet\CodeGen\Generators\NanoFrameworkGenerator.cs" Link="Generators\NanoFrameworkGenerator.cs" />
     <Compile Include="..\..\UnitsNet\CodeGen\Generators\NanoFrameworkVersions.cs" Link="Generators\NanoFrameworkVersions.cs" />
     <Compile Include="..\..\UnitsNet\CodeGen\Generators\QuantityJsonFilesParser.cs" Link="Generators\QuantityJsonFilesParser.cs" />
     <Compile Include="..\..\UnitsNet\CodeGen\Generators\QuantityRelationsParser.cs" Link="Generators\QuantityRelationsParser.cs" />
