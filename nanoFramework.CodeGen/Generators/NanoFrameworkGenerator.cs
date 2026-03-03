@@ -346,7 +346,7 @@ namespace CodeGen.Generators
             string mscorlibNuGetVersion,
             string mathNuGetVersion)
         {
-            var filePath = Path.Combine(projectPath, $"nanoFramework.UnitsNet.{quantity.Name}.nuspec");
+            var filePath = Path.Combine(projectPath, $"{quantity.Name}.nuspec");
 
             var content = new NuspecGenerator(
                 quantity,

@@ -30,8 +30,8 @@ namespace CodeGen.Generators.NanoFrameworkGen
   <metadata>
     <id>nanoFramework.UnitsNet.{_quantity.Name}</id>
     <version>$version$</version>
-    <title>Units.NET {_quantity.Name} - nanoFramework</title>
-    <authors>nanoframework, Andreas Gullberg Larsen</authors>
+    <title>.NET nanoFramework - Units.NET {_quantity.Name}</title>
+    <authors>nanoframework</authors>
     <license type=""file"">LICENSE.md</license>
     <projectUrl>https://github.com/nanoframework/nanoFramework.UnitsNet</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
