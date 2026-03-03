@@ -17,7 +17,10 @@ public class Program
     public static int Main(string[] args)
     {
         var verboseOption = new Option<bool>("--verbose");
-        var unitsnetRootOption = new Option<DirectoryInfo?>("--unitsnet-root", "Path to the root of the UnitsNet repository. If not specified, it will be auto-detected.");
+        var unitsnetRootOption = new Option<DirectoryInfo?>("--unitsnet-root") 
+        { 
+            Description = "Path to the root of the UnitsNet repository. If not specified, it will be auto-detected." 
+        };
 
         var rootCommand = new RootCommand("Code generation tool for nanoFramework.UnitsNet")
         {
