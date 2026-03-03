@@ -28,35 +28,38 @@ namespace CodeGen.Generators.NanoFrameworkGen
             Writer.WL($@"<?xml version=""1.0"" encoding=""utf-8""?>
 <package xmlns=""http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd"">
   <metadata>
-    <id>UnitsNet.nanoFramework.{_quantity.Name}</id>
-    <version>6.0.0-pre019</version>
+    <id>nanoFramework.UnitsNet.{_quantity.Name}</id>
+    <version>$version$</version>
     <title>Units.NET {_quantity.Name} - nanoFramework</title>
-    <authors>Andreas Gullberg Larsen,nanoframework</authors>
-    <owners>UnitsNet</owners>
-    <license type=""expression"">MIT-0</license>
-    <projectUrl>https://github.com/angularsen/UnitsNet</projectUrl>
+    <authors>nanoframework, Andreas Gullberg Larsen</authors>
+    <license type=""file"">LICENSE.md</license>
+    <projectUrl>https://github.com/nanoframework/nanoFramework.UnitsNet</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Adds {_quantity.Name} units for Units.NET on .NET nanoFramework. For .NET or .NET Core, use UnitsNet instead.</description>
-    <iconUrl>https://raw.githubusercontent.com/angularsen/UnitsNet/ce85185429be345d77eb2ce09c99d59cc9ab8aed/Docs/Images/logo-32.png</iconUrl>
+    <icon>images\logo-128.png</icon>
     <releaseNotes>
     </releaseNotes>
-    <copyright>Copyright 2013 Andreas Gullberg Larsen (andreas.larsen84@gmail.com).</copyright>
-    <language>en-US</language>
+    <copyright>Copyright (c) .NET Foundation and Contributors</copyright>
     <tags>nanoframework {_quantity.Name.ToLower()} unit units quantity quantities measurement si metric imperial abbreviation abbreviations convert conversion parse immutable</tags>
     <dependencies>
-      <dependency id=""nanoFramework.CoreLibrary"" version=""{_mscorlibNuGetVersion}"" />");
+      <group targetFramework=""netnano1.0"">
+        <dependency id=""nanoFramework.CoreLibrary"" version=""{_mscorlibNuGetVersion}"" />");
 
             if (NanoFrameworkGenerator.ProjectsRequiringMath.Contains(_quantity.Name))
             {
                 Writer.WL($@"
-      <dependency id=""nanoFramework.System.Math"" version=""{_mathNuGetVersion}"" />");
+        <dependency id=""nanoFramework.System.Math"" version=""{_mathNuGetVersion}"" />");
             }
 
             Writer.WL($@"
+      </group>
     </dependencies>
   </metadata>
   <files>
-    <file src=""..\..\..\Artifacts\UnitsNet.NanoFramework\{_quantity.Name}\UnitsNet.*"" target=""lib\netnano1.0"" />
+    <file src=""..\..\..\assets\readme.txt"" target="""" />
+    <file src=""..\..\..\LICENSE.md"" target="""" />
+    <file src=""..\..\..\UnitsNet\Docs\Images\logo-128.png"" target=""images\"" />
+    <file src=""bin\Release\UnitsNet.{_quantity.Name}.*"" target=""lib\netnano1.0"" />
   </files>
 </package>");
 

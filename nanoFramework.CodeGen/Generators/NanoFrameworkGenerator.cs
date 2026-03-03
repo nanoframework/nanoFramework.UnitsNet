@@ -81,7 +81,8 @@ namespace CodeGen.Generators
                     projectPath,
                     quantity.Name,
                     versions.MscorlibNugetVersion,
-                    versions.MathNugetVersion);
+                    versions.MathNugetVersion,
+                    versions.NbgvNugetVersion);
 
                 GenerateNuspec(
                     projectPath,
@@ -289,7 +290,17 @@ namespace CodeGen.Generators
                 new Regex(@"<HintPath>.*[\\\/]nanoFramework\.System\.Math\.(?<version>.*?)[\\\/]lib[\\\/](?:netnano[\d\.]+[\\\/])?System\.Math\.dll<", RegexOptions.IgnoreCase),
                 "nanoFramework.System.Math nuget version");
 
-            return new NanoFrameworkVersions(mscorlibVersion, mscorlibNuGetVersion, mathVersion, mathNuGetVersion);
+            // <Import Project="..\packages\Nerdbank.GitVersioning.3.9.50\build\Nerdbank.GitVersioning.props" 
+            var nbgvNuGetVersion = ParseVersion(projectFileContent,
+                new Regex(@"<Import Project="".*[\\\/]Nerdbank\.GitVersioning\.(?<version>.*?)[\\\/]build[\\\/]Nerdbank\.GitVersioning\.props""", RegexOptions.IgnoreCase),
+                "Nerdbank.GitVersioning nuget version");
+
+            return new NanoFrameworkVersions(
+                mscorlibVersion,
+                mscorlibNuGetVersion,
+                mathVersion,
+                mathNuGetVersion,
+                nbgvNuGetVersion);
         }
 
         private static string ParseVersion(
@@ -312,10 +323,15 @@ namespace CodeGen.Generators
             string projectPath,
             string quantityName,
             string mscorlibNuGetVersion,
-            string mathNuGetVersion)
+            string mathNuGetVersion,
+            string nbgvNuGetVersion)
         {
             var filePath = Path.Combine(projectPath, "packages.config");
-            var content = GeneratePackageConfigFile(quantityName, mscorlibNuGetVersion, mathNuGetVersion);
+            var content = GeneratePackageConfigFile(
+                quantityName,
+                mscorlibNuGetVersion,
+                mathNuGetVersion,
+                nbgvNuGetVersion);
 
             File.WriteAllText(filePath, content);
         }
@@ -326,7 +342,7 @@ namespace CodeGen.Generators
             string mscorlibNuGetVersion,
             string mathNuGetVersion)
         {
-            var filePath = Path.Combine(projectPath, $"UnitsNet.NanoFramework.{quantity.Name}.nuspec");
+            var filePath = Path.Combine(projectPath, $"nanoFramework.UnitsNet.{quantity.Name}.nuspec");
 
             var content = new NuspecGenerator(
                 quantity,
@@ -340,7 +356,7 @@ namespace CodeGen.Generators
         {
             var content = new PropertyGenerator().Generate();
             File.WriteAllText(filePath, content);
-            Log.Information("✅ AssemblyInfo.cs (nanoFramework)");
+            Log.Information("✅ AssemblyInfo.cs");
         }
 
         private static void GenerateUnitType(Quantity quantity, string filePath, UnitEnumNameToValue unitEnumValues)
@@ -365,34 +381,40 @@ namespace CodeGen.Generators
         {
             var content = new ProjectGenerator(quantity, versions).Generate();
             File.WriteAllText(filePath, content);
+            Directory.CreateDirectory(Path.Combine(Path.GetDirectoryName(filePath), "Properties"));
         }
 
         private static void GenerateSolution(Quantity[] quantities, string outputDir)
         {
             var content = new SolutionGenerator(quantities).Generate();
-            var filePath = Path.Combine(outputDir, "UnitsNet.nanoFramework.sln");
+            var filePath = Path.Combine(outputDir, "nanoFramework.UnitsNet.sln");
 
             File.WriteAllText(filePath, content);
-            Log.Information("✅ UnitsNet.nanoFramework.sln (nanoFramework)");
+            Log.Information("✅ nanoFramework.UnitsNet.sln");
         }
 
         private static string GeneratePackageConfigFile(
             string quantityName,
             string mscorlibNuGetVersion,
-            string mathNuGetVersion)
+            string mathNuGetVersion,
+            string nbgvNuGetVersion)
         {
             MyTextWriter writer = new();
 
             writer.WL($@"
 <?xml version=""1.0"" encoding=""utf-8""?>
 <packages>
-  <package id=""nanoFramework.CoreLibrary"" version=""{mscorlibNuGetVersion}"" targetFramework=""netnanoframework10"" />");
+  <package id=""nanoFramework.CoreLibrary"" version=""{mscorlibNuGetVersion}"" targetFramework=""netnano1.0"" />");
 
             if (ProjectsRequiringMath.Contains(quantityName))
             {
                 writer.WL($@"
-  <package id=""nanoFramework.System.Math"" version=""{mathNuGetVersion}"" targetFramework=""netnanoframework10"" />");
+  <package id=""nanoFramework.System.Math"" version=""{mathNuGetVersion}"" targetFramework=""netnano1.0"" />");
             }
+
+            writer.WL($@"
+  <package id=""Nerdbank.GitVersioning"" version=""{nbgvNuGetVersion}"" targetFramework=""netnano1.0"" developmentDependency=""true"" /> ");
+
 
             writer.WL($@"</packages>");
 

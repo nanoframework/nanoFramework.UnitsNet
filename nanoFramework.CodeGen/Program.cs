@@ -69,15 +69,6 @@ public class Program
             
             QuantityNameToUnitEnumValues quantityNameToUnitEnumValues = UnitEnumValueAllocator.AllocateNewUnitEnumValues($"{unitsNetRootDir}/Common/UnitEnumValues.g.json", quantities);
 
-            QuantityRelationsParser.ParseAndApplyRelations(
-                unitsNetRootDir,
-                quantities);
-
-            UnitsNetGenerator.Generate(
-                unitsNetRootDir,
-                quantities,
-                quantityNameToUnitEnumValues);
-
             NanoFrameworkGenerator.Generate(
                 unitsNetRootDir,
                 nanoRootDir,

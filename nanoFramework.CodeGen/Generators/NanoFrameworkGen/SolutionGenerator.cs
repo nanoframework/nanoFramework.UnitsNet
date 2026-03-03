@@ -24,8 +24,8 @@ namespace CodeGen.Generators.NanoFrameworkGen
         {
             StringBuilder sb = new();
             Writer.WL($@"Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30413.136
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34024.191
 MinimumVisualStudioVersion = 10.0.40219.1");
 
             foreach (var quantity in _quantities)
