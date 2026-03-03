@@ -51,10 +51,6 @@ pool:
 
 steps:
 
-- checkout: self
-  fetchDepth: 1
-  submodules: true
-
 - template: azure-pipelines-templates/class-lib-build-only.yml@templates
   parameters:
     skipSonarCloudAnalysis: true
