@@ -9,18 +9,21 @@
     <projectUrl>https://github.com/nanoframework/nanoFramework.UnitsNet</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Adds ThermalConductivity units for Units.NET on .NET nanoFramework. For .NET or .NET Core, use UnitsNet instead.</description>
-    <iconUrl>https://raw.githubusercontent.com/angularsen/UnitsNet/ce85185429be345d77eb2ce09c99d59cc9ab8aed/Docs/Images/logo-32.png</iconUrl>
+    <icon>images\logo-128.png</icon>
     <releaseNotes>
     </releaseNotes>
     <copyright>Copyright (c) .NET Foundation and Contributors</copyright>
     <tags>nanoframework thermalconductivity unit units quantity quantities measurement si metric imperial abbreviation abbreviations convert conversion parse immutable</tags>
     <dependencies>
-      <dependency id="nanoFramework.CoreLibrary" version="1.17.11" />
+      <group targetFramework="netnano1.0">
+        <dependency id="nanoFramework.CoreLibrary" version="1.17.11" />
+      </group>
     </dependencies>
   </metadata>
   <files>
-    <file src="..\..\assets\readme.txt" target="" />
-    <file src="..\..\LICENSE.md" target="" />
-    <file src="..\..\..\Artifacts\UnitsNet.NanoFramework\ThermalConductivity\UnitsNet.*" target="lib\netnano1.0" />
+    <file src="..\..\..\assets\readme.txt" target="" />
+    <file src="..\..\..\LICENSE.md" target="" />
+    <file src="..\..\..\UnitsNet\Docs\Images\logo-128.png" target="images\" />
+    <file src="bin\Release\UnitsNet.ThermalConductivity.*" target="lib\netnano1.0" />
   </files>
 </package>
