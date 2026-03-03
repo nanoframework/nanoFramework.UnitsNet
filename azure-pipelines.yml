@@ -32,6 +32,8 @@ resources:
   repositories:
     - repository: templates
       type: github
+      name: nanoframework/nf-tools
+      endpoint: nanoframework
 
 variables:
   - name: DOTNET_NOLOGO
