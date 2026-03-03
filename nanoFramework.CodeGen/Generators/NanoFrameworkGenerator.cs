@@ -62,7 +62,7 @@ namespace CodeGen.Generators
             logger.LogInformation($"Referencing nanoFramework.CoreLibrary {versions.MscorlibNugetVersion}");
             logger.LogInformation($"Referencing nanoFramework.System.Math {versions.MathNugetVersion}");
 
-            var outputDir = Path.Combine(unitsNetRootDir, "UnitsNet.NanoFramework", "GeneratedCode");
+            var outputDir = Path.Combine(nanoRoot, "nanoFramework.UnitsNet", "GeneratedCode");
             var outputQuantities = Path.Combine(outputDir, "Quantities");
             var outputUnits = Path.Combine(outputDir, "Units");
             var outputProperties = Path.Combine(outputDir, "Properties");
@@ -71,8 +71,6 @@ namespace CodeGen.Generators
             Directory.CreateDirectory(outputQuantities);
             Directory.CreateDirectory(outputUnits);
             Directory.CreateDirectory(outputProperties);
-
-            var lengthNuspecFile = Path.Combine(outputDir, "Length", "nanoFramework.UnitsNet.Length.nuspec");
 
             foreach (Quantity quantity in quantities)
             {
@@ -99,6 +97,7 @@ namespace CodeGen.Generators
 
                 Log.Information("✅ {Quantity} (nanoFramework)", quantity.Name);
             }
+
             Log.Information("");
 
             GenerateProperties(Path.Combine(outputProperties, "AssemblyInfo.cs"));
