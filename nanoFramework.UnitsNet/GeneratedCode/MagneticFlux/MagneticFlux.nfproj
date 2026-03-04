@@ -14,7 +14,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <FileAlignment>512</FileAlignment>
     <RootNamespace>UnitsNet</RootNamespace>
-    <AssemblyName>UnitsNet.MagneticFlux</AssemblyName>
+    <AssemblyName>nanoFramework.UnitsNet.MagneticFlux</AssemblyName>
     <TargetFrameworkVersion>v1.0</TargetFrameworkVersion>
     <DocumentationFile>bin\$(Configuration)\$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>

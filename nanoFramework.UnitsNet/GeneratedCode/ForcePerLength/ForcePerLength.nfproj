@@ -14,7 +14,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <FileAlignment>512</FileAlignment>
     <RootNamespace>UnitsNet</RootNamespace>
-    <AssemblyName>UnitsNet.ForcePerLength</AssemblyName>
+    <AssemblyName>nanoFramework.UnitsNet.ForcePerLength</AssemblyName>
     <TargetFrameworkVersion>v1.0</TargetFrameworkVersion>
     <DocumentationFile>bin\$(Configuration)\$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>

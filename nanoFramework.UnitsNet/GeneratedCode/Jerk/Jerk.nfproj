@@ -14,7 +14,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <FileAlignment>512</FileAlignment>
     <RootNamespace>UnitsNet</RootNamespace>
-    <AssemblyName>UnitsNet.Jerk</AssemblyName>
+    <AssemblyName>nanoFramework.UnitsNet.Jerk</AssemblyName>
     <TargetFrameworkVersion>v1.0</TargetFrameworkVersion>
     <DocumentationFile>bin\$(Configuration)\$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>

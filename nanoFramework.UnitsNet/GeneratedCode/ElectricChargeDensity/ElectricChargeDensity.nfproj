@@ -14,7 +14,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <FileAlignment>512</FileAlignment>
     <RootNamespace>UnitsNet</RootNamespace>
-    <AssemblyName>UnitsNet.ElectricChargeDensity</AssemblyName>
+    <AssemblyName>nanoFramework.UnitsNet.ElectricChargeDensity</AssemblyName>
     <TargetFrameworkVersion>v1.0</TargetFrameworkVersion>
     <DocumentationFile>bin\$(Configuration)\$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
