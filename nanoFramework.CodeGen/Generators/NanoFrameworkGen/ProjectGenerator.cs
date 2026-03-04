@@ -51,6 +51,15 @@ namespace CodeGen.Generators.NanoFrameworkGen
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <ContinuousIntegrationBuild Condition=""'$(TF_BUILD)' == 'true'"">true</ContinuousIntegrationBuild>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\..\..\key.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DelaySign>false</DelaySign>
+  </PropertyGroup>
   <Import Project=""$(NanoFrameworkProjectSystemPath)NFProjectSystem.props"" Condition=""Exists('$(NanoFrameworkProjectSystemPath)NFProjectSystem.props')"" />
   <ItemGroup>
     <Compile Include=""..\Quantities\{_quantity.Name}.g.cs"" Link="".{_quantity.Name}.g.cs"" />
@@ -77,6 +86,7 @@ namespace CodeGen.Generators.NanoFrameworkGen
             Writer.WL($@"
   </ItemGroup>
   <ItemGroup>
+    <None Include=""..\..\..\key.snk"" Link=""key.snk"" />
     <None Include=""packages.config"" />
   </ItemGroup>
   <Import Project=""$(NanoFrameworkProjectSystemPath)NFProjectSystem.CSharp.targets"" Condition=""Exists('$(NanoFrameworkProjectSystemPath)NFProjectSystem.CSharp.targets')"" />
