@@ -61,7 +61,7 @@ namespace CodeGen.Generators.NanoFrameworkGen
     <file src=""..\..\..\assets\readme.txt"" target="""" />
     <file src=""..\..\..\LICENSE.md"" target="""" />
     <file src=""..\..\..\UnitsNet\Docs\Images\logo-128.png"" target=""images\"" />
-    <file src=""bin\Release\UnitsNet.{_quantity.Name}.*"" target=""lib\netnano1.0"" />
+    <file src=""bin\Release\nanoFramework.UnitsNet.{_quantity.Name}.*"" target=""lib\netnano1.0"" />
   </files>
 </package>");
 
