@@ -401,6 +401,8 @@ namespace CodeGen.Generators
             Log.Information("✅ nanoFramework.UnitsNet.sln");
         }
 
+        private const string SourceLinkVersion = "8.0.0";
+
         private static string GeneratePackageConfigFile(
             string quantityName,
             string mscorlibNuGetVersion,
@@ -412,6 +414,9 @@ namespace CodeGen.Generators
             writer.WL($@"
 <?xml version=""1.0"" encoding=""utf-8""?>
 <packages>
+  <package id=""Microsoft.Build.Tasks.Git"" version=""{SourceLinkVersion}"" targetFramework=""netnano1.0"" developmentDependency=""true"" />
+  <package id=""Microsoft.SourceLink.Common"" version=""{SourceLinkVersion}"" targetFramework=""netnano1.0"" developmentDependency=""true"" />
+  <package id=""Microsoft.SourceLink.GitHub"" version=""{SourceLinkVersion}"" targetFramework=""netnano1.0"" developmentDependency=""true"" />
   <package id=""nanoFramework.CoreLibrary"" version=""{mscorlibNuGetVersion}"" targetFramework=""netnano1.0"" />");
 
             if (ProjectsRequiringMath.Contains(quantityName))

@@ -18,12 +18,16 @@ namespace CodeGen.Generators.NanoFrameworkGen
             _quantity = quantity ?? throw new ArgumentNullException(nameof(quantity));
             _versions = versions;
         }
+        private const string SourceLinkVersion = "8.0.0";
 
         public string Generate()
         {
             Writer.WL($@"<?xml version=""1.0"" encoding=""utf-8""?>
 <Project ToolsVersion=""15.0"" DefaultTargets=""Build"" xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
   <Import Project=""..\..\..\packages\Nerdbank.GitVersioning.{_versions.NbgvNugetVersion}\build\Nerdbank.GitVersioning.props"" Condition=""Exists('..\..\..\packages\Nerdbank.GitVersioning.{_versions.NbgvNugetVersion}\build\Nerdbank.GitVersioning.props')"" />
+  <Import Project=""..\..\..\packages\Microsoft.Build.Tasks.Git.{SourceLinkVersion}\build\Microsoft.Build.Tasks.Git.props"" Condition=""Exists('..\..\..\packages\Microsoft.Build.Tasks.Git.{SourceLinkVersion}\build\Microsoft.Build.Tasks.Git.props')"" />
+  <Import Project=""..\..\..\packages\Microsoft.SourceLink.Common.{SourceLinkVersion}\build\Microsoft.SourceLink.Common.props"" Condition=""Exists('..\..\..\packages\Microsoft.SourceLink.Common.{SourceLinkVersion}\build\Microsoft.SourceLink.Common.props')"" />
+  <Import Project=""..\..\..\packages\Microsoft.SourceLink.GitHub.{SourceLinkVersion}\build\Microsoft.SourceLink.GitHub.props"" Condition=""Exists('..\..\..\packages\Microsoft.SourceLink.GitHub.{SourceLinkVersion}\build\Microsoft.SourceLink.GitHub.props')"" />
   <PropertyGroup Label=""Globals"">
     <NanoFrameworkProjectSystemPath>$(MSBuildExtensionsPath)\nanoFramework\v1.0\</NanoFrameworkProjectSystemPath>
   </PropertyGroup>
@@ -40,6 +44,12 @@ namespace CodeGen.Generators.NanoFrameworkGen
     <AssemblyName>nanoFramework.UnitsNet.{_quantity.Name}</AssemblyName>
     <TargetFrameworkVersion>v1.0</TargetFrameworkVersion>
     <DocumentationFile>bin\$(Configuration)\$(AssemblyName).xml</DocumentationFile>
+    <Deterministic>true</Deterministic>
+    <DebugType>portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <ContinuousIntegrationBuild Condition=""'$(TF_BUILD)' == 'true'"">true</ContinuousIntegrationBuild>
   </PropertyGroup>
   <Import Project=""$(NanoFrameworkProjectSystemPath)NFProjectSystem.props"" Condition=""Exists('$(NanoFrameworkProjectSystemPath)NFProjectSystem.props')"" />
   <ItemGroup>
@@ -81,8 +91,14 @@ namespace CodeGen.Generators.NanoFrameworkGen
     </PropertyGroup>
     <Error Condition=""!Exists('..\..\..\packages\Nerdbank.GitVersioning.{_versions.NbgvNugetVersion}\build\Nerdbank.GitVersioning.props')"" Text=""$([System.String]::Format('$(ErrorText)', '..\..\..\packages\Nerdbank.GitVersioning.{_versions.NbgvNugetVersion}\build\Nerdbank.GitVersioning.props'))"" />
     <Error Condition=""!Exists('..\..\..\packages\Nerdbank.GitVersioning.{_versions.NbgvNugetVersion}\build\Nerdbank.GitVersioning.targets')"" Text=""$([System.String]::Format('$(ErrorText)', '..\..\..\packages\Nerdbank.GitVersioning.{_versions.NbgvNugetVersion}\build\Nerdbank.GitVersioning.targets'))"" />
+    <Error Condition=""!Exists('..\..\..\packages\Microsoft.Build.Tasks.Git.{SourceLinkVersion}\build\Microsoft.Build.Tasks.Git.props')"" Text=""$([System.String]::Format('$(ErrorText)', '..\..\..\packages\Microsoft.Build.Tasks.Git.{SourceLinkVersion}\build\Microsoft.Build.Tasks.Git.props'))"" />
+    <Error Condition=""!Exists('..\..\..\packages\Microsoft.SourceLink.Common.{SourceLinkVersion}\build\Microsoft.SourceLink.Common.props')"" Text=""$([System.String]::Format('$(ErrorText)', '..\..\..\packages\Microsoft.SourceLink.Common.{SourceLinkVersion}\build\Microsoft.SourceLink.Common.props'))"" />
+    <Error Condition=""!Exists('..\..\..\packages\Microsoft.SourceLink.GitHub.{SourceLinkVersion}\build\Microsoft.SourceLink.GitHub.props')"" Text=""$([System.String]::Format('$(ErrorText)', '..\..\..\packages\Microsoft.SourceLink.GitHub.{SourceLinkVersion}\build\Microsoft.SourceLink.GitHub.props'))"" />
   </Target>
   <Import Project=""..\..\..\packages\Nerdbank.GitVersioning.{_versions.NbgvNugetVersion}\build\Nerdbank.GitVersioning.targets"" Condition=""Exists('..\..\..\packages\Nerdbank.GitVersioning.{_versions.NbgvNugetVersion}\build\Nerdbank.GitVersioning.targets')"" />
+  <Import Project=""..\..\..\packages\Microsoft.Build.Tasks.Git.{SourceLinkVersion}\build\Microsoft.Build.Tasks.Git.targets"" Condition=""Exists('..\..\..\packages\Microsoft.Build.Tasks.Git.{SourceLinkVersion}\build\Microsoft.Build.Tasks.Git.targets')"" />
+  <Import Project=""..\..\..\packages\Microsoft.SourceLink.Common.{SourceLinkVersion}\build\Microsoft.SourceLink.Common.targets"" Condition=""Exists('..\..\..\packages\Microsoft.SourceLink.Common.{SourceLinkVersion}\build\Microsoft.SourceLink.Common.targets')"" />
+  <Import Project=""..\..\..\packages\Microsoft.SourceLink.GitHub.{SourceLinkVersion}\build\Microsoft.SourceLink.GitHub.targets"" Condition=""Exists('..\..\..\packages\Microsoft.SourceLink.GitHub.{SourceLinkVersion}\build\Microsoft.SourceLink.GitHub.targets')"" />
 
 </Project>");
 
