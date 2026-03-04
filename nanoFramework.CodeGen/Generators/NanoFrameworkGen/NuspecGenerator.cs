@@ -42,6 +42,7 @@ namespace CodeGen.Generators.NanoFrameworkGen
     </releaseNotes>
     <copyright>Copyright (c) .NET Foundation and Contributors</copyright>
     <tags>nanoframework {_quantity.Name.ToLower()} unit units quantity quantities measurement si metric imperial abbreviation abbreviations convert conversion parse immutable</tags>
+    <repository type=""git"" url=""https://github.com/nanoframework/nanoFramework.UnitsNet"" />
     <dependencies>
       <group targetFramework="".NETnanoFramework1.0"">
         <dependency id=""nanoFramework.CoreLibrary"" version=""{_mscorlibNuGetVersion}"" />");
