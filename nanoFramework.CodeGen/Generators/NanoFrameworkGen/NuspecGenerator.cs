@@ -43,7 +43,7 @@ namespace CodeGen.Generators.NanoFrameworkGen
     <copyright>Copyright (c) .NET Foundation and Contributors</copyright>
     <tags>nanoframework {_quantity.Name.ToLower()} unit units quantity quantities measurement si metric imperial abbreviation abbreviations convert conversion parse immutable</tags>
     <dependencies>
-      <group targetFramework=""netnano1.0"">
+      <group targetFramework="".NETnanoFramework1.0"">
         <dependency id=""nanoFramework.CoreLibrary"" version=""{_mscorlibNuGetVersion}"" />");
 
             if (NanoFrameworkGenerator.ProjectsRequiringMath.Contains(_quantity.Name))
