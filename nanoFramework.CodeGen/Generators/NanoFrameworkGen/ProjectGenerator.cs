@@ -37,7 +37,7 @@ namespace CodeGen.Generators.NanoFrameworkGen
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <FileAlignment>512</FileAlignment>
     <RootNamespace>UnitsNet</RootNamespace>
-    <AssemblyName>UnitsNet.{_quantity.Name}</AssemblyName>
+    <AssemblyName>nanoFramework.UnitsNet.{_quantity.Name}</AssemblyName>
     <TargetFrameworkVersion>v1.0</TargetFrameworkVersion>
     <DocumentationFile>bin\$(Configuration)\$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
