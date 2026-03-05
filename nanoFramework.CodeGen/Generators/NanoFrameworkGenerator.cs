@@ -275,8 +275,9 @@ namespace CodeGen.Generators
             var projectFileContent = File.ReadAllText(angleProjectFile);
 
             // <Reference Include="mscorlib, Version=1.10.5.0, Culture=neutral, PublicKeyToken=c07d481e9758c731">
+            // Supports versions with pre-release suffixes like 2.0.0-preview.35
             var mscorlibVersion = ParseVersion(projectFileContent,
-                new Regex(@"<Reference Include=""mscorlib,\s*Version=(?<version>[\d\.]+),.*"">", RegexOptions.IgnoreCase),
+                new Regex(@"<Reference Include=""mscorlib,\s*Version=(?<version>[\d\.]+(?:-[\w\.]+)?),.*"">", RegexOptions.IgnoreCase),
                 "mscorlib assembly version");
 
             // <HintPath>..\packages\nanoFramework.CoreLibrary.1.10.5-preview.18\lib\netnano1.0\mscorlib.dll</HintPath>
@@ -285,8 +286,9 @@ namespace CodeGen.Generators
                 "nanoFramework.CoreLibrary nuget version");
 
             // <Reference Include="System.Math, Version=1.4.1.0, Culture=neutral, PublicKeyToken=c07d481e9758c731">
+            // Supports versions with pre-release suffixes like 2.0.0-preview.6
             var mathVersion = ParseVersion(projectFileContent,
-                new Regex(@"<Reference Include=""System.Math,\s*Version=(?<version>[\d\.]+),.*"">", RegexOptions.IgnoreCase),
+                new Regex(@"<Reference Include=""System.Math,\s*Version=(?<version>[\d\.]+(?:-[\w\.]+)?),.*"">", RegexOptions.IgnoreCase),
                 "System.Math assembly version");
 
             //   <HintPath>..\packages\nanoFramework.System.Math.1.4.1-preview.7\lib\netnano1.0\System.Math.dll</HintPath>
