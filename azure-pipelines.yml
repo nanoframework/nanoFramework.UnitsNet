@@ -55,7 +55,7 @@ steps:
   parameters:
     skipSonarCloudAnalysis: true
     runUnitTests: false
-    usePreviewBuild: eq(variables['UseNanoPreviewBuild'], 'true')
+    usePreviewBuild: ${{ eq(variables['UseNanoPreviewBuild'], 'true') }}
 
 - powershell: |
     $generatedCodePath = "$(Build.SourcesDirectory)\nanoFramework.UnitsNet\GeneratedCode"
