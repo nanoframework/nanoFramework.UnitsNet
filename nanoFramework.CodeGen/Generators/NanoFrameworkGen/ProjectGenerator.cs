@@ -68,7 +68,7 @@ namespace CodeGen.Generators.NanoFrameworkGen
   </ItemGroup>
   <ItemGroup>
     <Reference Include=""mscorlib, Version={_versions.MscorlibVersion}, Culture=neutral, PublicKeyToken=c07d481e9758c731"">
-      <HintPath>..\..\..\packages\nanoFramework.CoreLibrary.{_versions.MscorlibNugetVersion}\lib\mscorlib.dll</HintPath>
+      <HintPath>..\..\..\packages\nanoFramework.CoreLibrary.{_versions.MscorlibNugetVersion}\lib\netnano1.0\mscorlib.dll</HintPath>
       <Private>True</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>");
@@ -77,7 +77,7 @@ namespace CodeGen.Generators.NanoFrameworkGen
             {
                 Writer.WL($@"
     <Reference Include=""System.Math, Version={_versions.MathVersion}, Culture=neutral, PublicKeyToken=c07d481e9758c731"">
-      <HintPath>..\..\..\packages\nanoFramework.System.Math.{_versions.MathNugetVersion}\lib\System.Math.dll</HintPath>
+      <HintPath>..\..\..\packages\nanoFramework.System.Math.{_versions.MathNugetVersion}\lib\netnano1.0\System.Math.dll</HintPath>
       <Private>True</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>");
