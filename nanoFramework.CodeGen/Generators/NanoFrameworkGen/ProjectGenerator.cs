@@ -18,7 +18,7 @@ namespace CodeGen.Generators.NanoFrameworkGen
             _quantity = quantity ?? throw new ArgumentNullException(nameof(quantity));
             _versions = versions;
         }
-        private const string SourceLinkVersion = "8.0.0";
+        private const string SourceLinkVersion = "10.0.300";
 
         public string Generate()
         {
@@ -109,7 +109,6 @@ namespace CodeGen.Generators.NanoFrameworkGen
   <Import Project=""..\..\..\packages\Microsoft.Build.Tasks.Git.{SourceLinkVersion}\build\Microsoft.Build.Tasks.Git.targets"" Condition=""Exists('..\..\..\packages\Microsoft.Build.Tasks.Git.{SourceLinkVersion}\build\Microsoft.Build.Tasks.Git.targets')"" />
   <Import Project=""..\..\..\packages\Microsoft.SourceLink.Common.{SourceLinkVersion}\build\Microsoft.SourceLink.Common.targets"" Condition=""Exists('..\..\..\packages\Microsoft.SourceLink.Common.{SourceLinkVersion}\build\Microsoft.SourceLink.Common.targets')"" />
   <Import Project=""..\..\..\packages\Microsoft.SourceLink.GitHub.{SourceLinkVersion}\build\Microsoft.SourceLink.GitHub.targets"" Condition=""Exists('..\..\..\packages\Microsoft.SourceLink.GitHub.{SourceLinkVersion}\build\Microsoft.SourceLink.GitHub.targets')"" />
-
 </Project>");
 
             return Writer.ToString();
