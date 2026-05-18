@@ -13,7 +13,14 @@ namespace CodeGen.Generators
     /// <param name="MathVersion">System.Math assembly version in nanoFramework.System.Math nuget.</param>
     /// <param name="MathNugetVersion">Nuget version of nanoFramework.System.Math.</param>
     /// <param name="NbgvNugetVersion">Nuget version of Nerdbank.GitVersioning used for the generated projects.</param>
-    public record NanoFrameworkVersions(string MscorlibVersion, string MscorlibNugetVersion, string MathVersion, string MathNugetVersion, string NbgvNugetVersion)
+    /// <param name="SourceLinkVersion">Nuget version of Microsoft.SourceLink packages used for the generated projects.</param>
+    public record NanoFrameworkVersions(
+        string MscorlibVersion,
+        string MscorlibNugetVersion,
+        string MathVersion,
+        string MathNugetVersion,
+        string NbgvNugetVersion,
+        string SourceLinkVersion)
     {
 
     }

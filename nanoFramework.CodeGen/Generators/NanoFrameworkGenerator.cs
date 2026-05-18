@@ -83,7 +83,8 @@ namespace CodeGen.Generators
                     quantity.Name,
                     versions.MscorlibNugetVersion,
                     versions.MathNugetVersion,
-                    versions.NbgvNugetVersion);
+                    versions.NbgvNugetVersion,
+                    versions.SourceLinkVersion);
 
                 GenerateNuspec(
                     projectPath,
@@ -301,12 +302,18 @@ namespace CodeGen.Generators
                 new Regex(@"<Import Project="".*[\\\/]Nerdbank\.GitVersioning\.(?<version>.*?)[\\\/]build[\\\/]Nerdbank\.GitVersioning\.props""", RegexOptions.IgnoreCase),
                 "Nerdbank.GitVersioning nuget version");
 
+            // <Import Project="..\..\..\packages\Microsoft.SourceLink.GitHub.10.0.300\build\Microsoft.SourceLink.GitHub.props"
+            var sourceLinkVersion = ParseVersion(projectFileContent,
+                new Regex(@"<Import Project="".*[\\\/]Microsoft\.SourceLink\.GitHub\.(?<version>.*?)[\\\/]build[\\\/]Microsoft\.SourceLink\.GitHub\.props""", RegexOptions.IgnoreCase),
+                "Microsoft.SourceLink nuget version");
+
             return new NanoFrameworkVersions(
                 mscorlibVersion,
                 mscorlibNuGetVersion,
                 mathVersion,
                 mathNuGetVersion,
-                nbgvNuGetVersion);
+                nbgvNuGetVersion,
+                sourceLinkVersion);
         }
 
         private static string ParseVersion(
@@ -330,14 +337,16 @@ namespace CodeGen.Generators
             string quantityName,
             string mscorlibNuGetVersion,
             string mathNuGetVersion,
-            string nbgvNuGetVersion)
+            string nbgvNuGetVersion,
+            string sourceLinkVersion)
         {
             var filePath = Path.Combine(projectPath, "packages.config");
             var content = GeneratePackageConfigFile(
                 quantityName,
                 mscorlibNuGetVersion,
                 mathNuGetVersion,
-                nbgvNuGetVersion);
+                nbgvNuGetVersion,
+                sourceLinkVersion);
 
             File.WriteAllText(filePath, content);
         }
@@ -403,22 +412,21 @@ namespace CodeGen.Generators
             Log.Information("✅ nanoFramework.UnitsNet.sln");
         }
 
-        private const string SourceLinkVersion = "8.0.0";
-
         private static string GeneratePackageConfigFile(
             string quantityName,
             string mscorlibNuGetVersion,
             string mathNuGetVersion,
-            string nbgvNuGetVersion)
+            string nbgvNuGetVersion,
+            string sourceLinkVersion)
         {
             MyTextWriter writer = new();
 
             writer.WL($@"
 <?xml version=""1.0"" encoding=""utf-8""?>
 <packages>
-  <package id=""Microsoft.Build.Tasks.Git"" version=""{SourceLinkVersion}"" targetFramework=""netnano1.0"" developmentDependency=""true"" />
-  <package id=""Microsoft.SourceLink.Common"" version=""{SourceLinkVersion}"" targetFramework=""netnano1.0"" developmentDependency=""true"" />
-  <package id=""Microsoft.SourceLink.GitHub"" version=""{SourceLinkVersion}"" targetFramework=""netnano1.0"" developmentDependency=""true"" />
+  <package id=""Microsoft.Build.Tasks.Git"" version=""{sourceLinkVersion}"" targetFramework=""netnano1.0"" developmentDependency=""true"" />
+  <package id=""Microsoft.SourceLink.Common"" version=""{sourceLinkVersion}"" targetFramework=""netnano1.0"" developmentDependency=""true"" />
+  <package id=""Microsoft.SourceLink.GitHub"" version=""{sourceLinkVersion}"" targetFramework=""netnano1.0"" developmentDependency=""true"" />
   <package id=""nanoFramework.CoreLibrary"" version=""{mscorlibNuGetVersion}"" targetFramework=""netnano1.0"" />");
 
             if (ProjectsRequiringMath.Contains(quantityName))
@@ -428,7 +436,7 @@ namespace CodeGen.Generators
             }
 
             writer.WL($@"
-  <package id=""Nerdbank.GitVersioning"" version=""{nbgvNuGetVersion}"" targetFramework=""netnano1.0"" developmentDependency=""true"" /> ");
+  <package id=""Nerdbank.GitVersioning"" version=""{nbgvNuGetVersion}"" targetFramework=""netnano1.0"" developmentDependency=""true"" />");
 
 
             writer.WL($@"</packages>");
