@@ -67,7 +67,7 @@ namespace CodeGen.Generators.NanoFrameworkGen
     <Compile Include=""..\Properties\AssemblyInfo.cs"" Link=""Properties\AssemblyInfo.cs"" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include=""mscorlib, Version={_versions.MscorlibVersion}, Culture=neutral, PublicKeyToken=c07d481e9758c731"">
+    <Reference Include=""mscorlib, Version={NormalizeAssemblyVersion(_versions.MscorlibVersion)}, Culture=neutral, PublicKeyToken=c07d481e9758c731"">
       <HintPath>..\..\..\packages\nanoFramework.CoreLibrary.{_versions.MscorlibNugetVersion}\lib\netnano1.0\mscorlib.dll</HintPath>
       <Private>True</Private>
       <SpecificVersion>False</SpecificVersion>
@@ -76,7 +76,7 @@ namespace CodeGen.Generators.NanoFrameworkGen
             if (NanoFrameworkGenerator.ProjectsRequiringMath.Contains(_quantity.Name))
             {
                 Writer.WL($@"
-    <Reference Include=""System.Math, Version={_versions.MathVersion}, Culture=neutral, PublicKeyToken=c07d481e9758c731"">
+    <Reference Include=""System.Math, Version={NormalizeAssemblyVersion(_versions.MathVersion)}, Culture=neutral, PublicKeyToken=c07d481e9758c731"">
       <HintPath>..\..\..\packages\nanoFramework.System.Math.{_versions.MathNugetVersion}\lib\netnano1.0\System.Math.dll</HintPath>
       <Private>True</Private>
       <SpecificVersion>False</SpecificVersion>
@@ -112,6 +112,13 @@ namespace CodeGen.Generators.NanoFrameworkGen
 </Project>");
 
             return Writer.ToString();
+        }
+
+        private static string NormalizeAssemblyVersion(string version)
+        {
+            var coreVersion = version.Split('-')[0];
+
+            return coreVersion.Split('.').Length == 3 ? $"{coreVersion}.0" : coreVersion;
         }
     }
 }
