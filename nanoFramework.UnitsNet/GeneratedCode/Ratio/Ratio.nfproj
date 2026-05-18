@@ -43,7 +43,7 @@
     <Compile Include="..\Properties\AssemblyInfo.cs" Link="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="mscorlib, Version=2.0.0-preview.35, Culture=neutral, PublicKeyToken=c07d481e9758c731">
+    <Reference Include="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=c07d481e9758c731">
       <HintPath>..\..\..\packages\nanoFramework.CoreLibrary.2.0.0-preview.35\lib\netnano1.0\mscorlib.dll</HintPath>
       <Private>True</Private>
       <SpecificVersion>False</SpecificVersion>
@@ -73,5 +73,4 @@
   <Import Project="..\..\..\packages\Microsoft.Build.Tasks.Git.10.0.300\build\Microsoft.Build.Tasks.Git.targets" Condition="Exists('..\..\..\packages\Microsoft.Build.Tasks.Git.10.0.300\build\Microsoft.Build.Tasks.Git.targets')" />
   <Import Project="..\..\..\packages\Microsoft.SourceLink.Common.10.0.300\build\Microsoft.SourceLink.Common.targets" Condition="Exists('..\..\..\packages\Microsoft.SourceLink.Common.10.0.300\build\Microsoft.SourceLink.Common.targets')" />
   <Import Project="..\..\..\packages\Microsoft.SourceLink.GitHub.10.0.300\build\Microsoft.SourceLink.GitHub.targets" Condition="Exists('..\..\..\packages\Microsoft.SourceLink.GitHub.10.0.300\build\Microsoft.SourceLink.GitHub.targets')" />
-
 </Project>

@@ -43,7 +43,7 @@
     <Compile Include="..\Properties\AssemblyInfo.cs" Link="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="mscorlib, Version=2.0.0-preview.35, Culture=neutral, PublicKeyToken=c07d481e9758c731">
+    <Reference Include="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=c07d481e9758c731">
       <HintPath>..\..\..\packages\nanoFramework.CoreLibrary.2.0.0-preview.35\lib\netnano1.0\mscorlib.dll</HintPath>
       <Private>True</Private>
       <SpecificVersion>False</SpecificVersion>
