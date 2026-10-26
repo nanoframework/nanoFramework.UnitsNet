@@ -105,6 +105,9 @@ namespace CodeGen.Generators.NanoFrameworkGen
     <Error Condition=""!Exists('..\..\..\packages\Microsoft.SourceLink.GitHub.{_versions.SourceLinkVersion}\build\Microsoft.SourceLink.GitHub.props')"" Text=""$([System.String]::Format('$(ErrorText)', '..\..\..\packages\Microsoft.SourceLink.GitHub.{_versions.SourceLinkVersion}\build\Microsoft.SourceLink.GitHub.props'))"" />
   </Target>
   <Import Project=""..\..\..\packages\Nerdbank.GitVersioning.{_versions.NbgvNugetVersion}\build\Nerdbank.GitVersioning.targets"" Condition=""Exists('..\..\..\packages\Nerdbank.GitVersioning.{_versions.NbgvNugetVersion}\build\Nerdbank.GitVersioning.targets')"" />
+  <!-- Keep task assembly properties available during NuGet's intermediate import removal. -->
+  <Import Project=""..\..\..\packages\Microsoft.Build.Tasks.Git.*\build\Microsoft.Build.Tasks.Git.props"" Condition=""'$(MicrosoftBuildTasksGitAssemblyFile)' == ''"" />
+  <Import Project=""..\..\..\packages\Microsoft.SourceLink.Common.*\build\Microsoft.SourceLink.Common.props"" Condition=""'$(_MicrosoftSourceLinkCommonAssemblyFile)' == ''"" />
   <Import Project=""..\..\..\packages\Microsoft.Build.Tasks.Git.{_versions.SourceLinkVersion}\build\Microsoft.Build.Tasks.Git.targets"" Condition=""Exists('..\..\..\packages\Microsoft.Build.Tasks.Git.{_versions.SourceLinkVersion}\build\Microsoft.Build.Tasks.Git.targets')"" />
   <Import Project=""..\..\..\packages\Microsoft.SourceLink.Common.{_versions.SourceLinkVersion}\build\Microsoft.SourceLink.Common.targets"" Condition=""Exists('..\..\..\packages\Microsoft.SourceLink.Common.{_versions.SourceLinkVersion}\build\Microsoft.SourceLink.Common.targets')"" />
   <Import Project=""..\..\..\packages\Microsoft.SourceLink.GitHub.{_versions.SourceLinkVersion}\build\Microsoft.SourceLink.GitHub.targets"" Condition=""Exists('..\..\..\packages\Microsoft.SourceLink.GitHub.{_versions.SourceLinkVersion}\build\Microsoft.SourceLink.GitHub.targets')"" />
