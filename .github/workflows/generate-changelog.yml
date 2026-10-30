@@ -7,10 +7,112 @@ run-name: Generate changelog
 on:
   push:
     tags:
-      - '*'
+      - 'v*'
+
+permissions:
+  contents: write
+  pull-requests: read
+
+env:
+  UPSTREAM_REPO: angularsen/UnitsNet
+  TAG_PREFIX: UnitsNet/
 
 jobs:
   compose_changelog:
     name: nanoFramework
-    uses: nanoframework/nf-tools/.github/workflows/generate-changelog.yml@main
-    secrets: inherit
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build Changelog
+        id: build_changelog
+        uses: mikepenz/release-changelog-builder-action@v6
+        with:
+          configuration: '.github/.changelog-config.json'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Compose upstream changes
+        id: upstream
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          TAG_NAME="${GITHUB_REF#refs/tags/}"
+
+          # Units.NET sub-module commit for this release and for the previous one
+          CURRENT_SHA=$(git rev-parse "${TAG_NAME}:UnitsNet")
+          PREVIOUS_TAG=$(git describe --tags --abbrev=0 --match 'v*' "${TAG_NAME}^" 2>/dev/null || true)
+          PREVIOUS_SHA=""
+          if [ -n "$PREVIOUS_TAG" ]; then
+            PREVIOUS_SHA=$(git rev-parse "${PREVIOUS_TAG}:UnitsNet")
+          fi
+
+          echo "Sub-module at ${CURRENT_SHA}, previous release ${PREVIOUS_TAG:-none} at ${PREVIOUS_SHA:-none}"
+
+          UPSTREAM_FILE="$RUNNER_TEMP/upstream.md"
+          : > "$UPSTREAM_FILE"
+
+          if [ "$CURRENT_SHA" != "$PREVIOUS_SHA" ]; then
+            # find upstream release tag matching the sub-module commit (peeled refs cover annotated tags)
+            UPSTREAM_TAG=$(git ls-remote --tags "https://github.com/${UPSTREAM_REPO}" "refs/tags/${TAG_PREFIX}*" \
+              | grep "^${CURRENT_SHA}" | head -n 1 | cut -f 2 || true)
+            UPSTREAM_TAG="${UPSTREAM_TAG#refs/tags/}"
+            UPSTREAM_TAG="${UPSTREAM_TAG%^\{\}}"
+
+            if [ -n "$UPSTREAM_TAG" ]; then
+              echo "Upstream release: ${UPSTREAM_TAG}"
+
+              {
+                echo "## Units.NET upstream"
+                echo ""
+                echo "Based on Units.NET [${UPSTREAM_TAG}](https://github.com/${UPSTREAM_REPO}/releases/tag/${UPSTREAM_TAG})."
+                echo ""
+                gh release view "$UPSTREAM_TAG" --repo "$UPSTREAM_REPO" --json body --jq '.body'
+                echo ""
+              } >> "$UPSTREAM_FILE"
+            else
+              {
+                echo "## Units.NET upstream"
+                echo ""
+                echo "Units.NET updated to [${CURRENT_SHA:0:7}](https://github.com/${UPSTREAM_REPO}/commit/${CURRENT_SHA})."
+                echo ""
+              } >> "$UPSTREAM_FILE"
+            fi
+
+            if [ -n "$PREVIOUS_SHA" ]; then
+              echo "**Upstream changes:** https://github.com/${UPSTREAM_REPO}/compare/${PREVIOUS_SHA}...${UPSTREAM_TAG:-$CURRENT_SHA}" >> "$UPSTREAM_FILE"
+              echo "" >> "$UPSTREAM_FILE"
+            fi
+          fi
+
+      - name: Update changelog in release
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          CHANGELOG: ${{ steps.build_changelog.outputs.changelog }}
+        shell: bash
+        run: |
+          TAG_NAME="${GITHUB_REF#refs/tags/}"
+
+          RELEASE_ID=$(gh api "repos/${GITHUB_REPOSITORY}/releases/tags/${TAG_NAME}" --jq '.id' 2>/dev/null || true)
+
+          if [ -z "$RELEASE_ID" ]; then
+            echo "::error::Could not find release for tag ${TAG_NAME}"
+            exit 1
+          fi
+
+          echo "Found release ID: ${RELEASE_ID} for tag: ${TAG_NAME}"
+
+          BODY="$(cat "$RUNNER_TEMP/upstream.md")
+          ## nanoFramework
+
+          ${CHANGELOG}"
+
+          jq -n --arg body "$BODY" '{body: $body}' > "$RUNNER_TEMP/payload.json"
+
+          gh api -X PATCH "repos/${GITHUB_REPOSITORY}/releases/${RELEASE_ID}" --input "$RUNNER_TEMP/payload.json" > /dev/null
+
+          echo "Release body updated."

@@ -1,0 +1,192 @@
+# Copyright (c) .NET Foundation and Contributors
+# See LICENSE file in the project root for full license information.
+
+# Checks for new stable Units.NET releases upstream (angularsen/UnitsNet) that are ahead of the
+# UnitsNet sub-module, updates the sub-module, regenerates the code and opens a PR with auto-merge.
+
+name: Sync upstream Units.NET release
+run-name: Sync upstream Units.NET release
+
+on:
+  schedule:
+    # At 03:00 UTC, every day.
+    - cron: '00 03 * * *'
+  workflow_dispatch:
+    inputs:
+      upstream_tag:
+        description: 'Upstream tag to sync to (e.g. UnitsNet/6.0.0-pre020). Leave empty to use the latest stable release ahead of the sub-module.'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+  pull-requests: write
+
+env:
+  UPSTREAM_REPO: angularsen/UnitsNet
+  TAG_PREFIX: UnitsNet/
+  DOTNET_NOLOGO: true
+
+jobs:
+  sync:
+    name: Sync upstream release
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+          token: ${{ secrets.NFBOT_GITHUB_ACTIONS || github.token }}
+
+      - name: Find upstream release to sync
+        id: find
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          INPUT_TAG: ${{ github.event.inputs.upstream_tag }}
+        run: |
+          $currentSha = (git -C UnitsNet rev-parse HEAD).Trim()
+          Write-Host "Sub-module currently at $currentSha"
+
+          # all upstream releases with the expected tag prefix
+          $releases = gh api "repos/$env:UPSTREAM_REPO/releases?per_page=100" --paginate | ConvertFrom-Json |
+            Where-Object { -not $_.draft -and $_.tag_name.StartsWith($env:TAG_PREFIX) }
+
+          if ($env:INPUT_TAG) {
+            $release = $releases | Where-Object { $_.tag_name -eq $env:INPUT_TAG } | Select-Object -First 1
+            if (-not $release) {
+              Write-Error "Upstream release '$env:INPUT_TAG' not found."
+              exit 1
+            }
+          }
+          else {
+            # stable releases only (some old upstream pre-releases aren't flagged, so also require a plain x.y.z version), newest first
+            $candidates = $releases |
+              Where-Object { -not $_.prerelease -and $_.tag_name.Substring($env:TAG_PREFIX.Length) -match '^\d+\.\d+\.\d+$' } |
+              Sort-Object { [version]($_.tag_name.Substring($env:TAG_PREFIX.Length)) } -Descending
+
+            $release = $null
+            foreach ($candidate in $candidates) {
+              # only consider releases on the line the sub-module is tracking (tag ahead of current commit)
+              $status = gh api "repos/$env:UPSTREAM_REPO/compare/$currentSha...$($candidate.tag_name)" --jq '.status'
+              Write-Host "$($candidate.tag_name): $status"
+
+              if ($status -eq 'ahead') {
+                $release = $candidate
+                break
+              }
+              if ($status -eq 'identical' -or $status -eq 'behind') {
+                # already synced to this or newer
+                break
+              }
+            }
+          }
+
+          if (-not $release) {
+            Write-Host "No new upstream release to sync."
+            "sync=false" >> $env:GITHUB_OUTPUT
+            exit 0
+          }
+
+          $tag = $release.tag_name
+          $version = $tag.Substring($env:TAG_PREFIX.Length)
+          $branch = "upstream-sync/$version"
+
+          if (git ls-remote --heads origin $branch) {
+            Write-Host "Branch $branch already exists. Skipping."
+            "sync=false" >> $env:GITHUB_OUTPUT
+            exit 0
+          }
+
+          Write-Host "Syncing to $tag (prerelease: $($release.prerelease))"
+
+          "sync=true" >> $env:GITHUB_OUTPUT
+          "tag=$tag" >> $env:GITHUB_OUTPUT
+          "version=$version" >> $env:GITHUB_OUTPUT
+          $isPrerelease = $release.prerelease -or ($version -notmatch '^\d+\.\d+\.\d+$')
+          "prerelease=$($isPrerelease.ToString().ToLower())" >> $env:GITHUB_OUTPUT
+          "branch=$branch" >> $env:GITHUB_OUTPUT
+          "previous_sha=$currentSha" >> $env:GITHUB_OUTPUT
+
+          # release notes for PR body
+          $release.body | Out-File -FilePath "$env:RUNNER_TEMP\upstream-notes.md" -Encoding utf8
+
+      - name: Update sub-module
+        if: steps.find.outputs.sync == 'true'
+        shell: pwsh
+        run: |
+          git -C UnitsNet fetch --tags origin
+          git -C UnitsNet checkout --detach "refs/tags/${{ steps.find.outputs.tag }}"
+
+      - name: Update version.json
+        # pre-release syncs keep the current version
+        if: steps.find.outputs.sync == 'true' && steps.find.outputs.prerelease == 'false'
+        shell: pwsh
+        run: |
+          $v = [version]'${{ steps.find.outputs.version }}'
+          $newVersion = "$($v.Major).$($v.Minor)"
+          $content = Get-Content version.json -Raw
+          $content = $content -replace '"version":\s*"[^"]*"', "`"version`": `"$newVersion`""
+          Set-Content -Path version.json -Value $content -NoNewline
+          Write-Host "version.json set to $newVersion"
+
+      - name: Setup .NET
+        if: steps.find.outputs.sync == 'true'
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Run code generator
+        if: steps.find.outputs.sync == 'true'
+        shell: pwsh
+        run: |
+          dotnet run --project "nanoFramework.CodeGen" 2>&1 | Tee-Object -Variable output
+          # code generator logs errors without returning a failure exit code
+          if ($LASTEXITCODE -ne 0 -or ($output -match ' ERR\]')) {
+            Write-Error "Code generation failed."
+            exit 1
+          }
+
+      - name: Create PR
+        if: steps.find.outputs.sync == 'true'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.NFBOT_GITHUB_ACTIONS || github.token }}
+        run: |
+          $tag = '${{ steps.find.outputs.tag }}'
+          $version = '${{ steps.find.outputs.version }}'
+          $branch = '${{ steps.find.outputs.branch }}'
+          $previousSha = '${{ steps.find.outputs.previous_sha }}'
+
+          git config user.name "nfbot"
+          git config user.email "dependencybot@nanoframework.net"
+
+          git checkout -b $branch
+          git add -A
+          git commit -m "Update Units.NET to $version" -m "Upstream release: https://github.com/$env:UPSTREAM_REPO/releases/tag/$tag"
+          git push origin $branch
+
+          $notes = Get-Content "$env:RUNNER_TEMP\upstream-notes.md" -Raw
+
+          $body = @"
+          Update Units.NET sub-module to upstream release [$tag](https://github.com/$env:UPSTREAM_REPO/releases/tag/$tag).
+
+          **Upstream changes:** https://github.com/$env:UPSTREAM_REPO/compare/$previousSha...$tag
+
+          ## Upstream release notes
+
+          $notes
+          "@
+
+          $body | Out-File -FilePath "$env:RUNNER_TEMP\pr-body.md" -Encoding utf8
+
+          gh pr create `
+            --base main `
+            --head $branch `
+            --title "Update Units.NET to $version" `
+            --body-file "$env:RUNNER_TEMP\pr-body.md" `
+            --label "Type: dependencies"
+
+          gh pr merge $branch --auto --squash

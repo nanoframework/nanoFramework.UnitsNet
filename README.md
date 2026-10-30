@@ -118,6 +118,19 @@ The same strongly typed units are available on other platforms, all based on the
 | Python                     | unitsnet-py | [pypi](https://pypi.org/project/unitsnet-py)                         | [GitHub](https://github.com/haimkastner/unitsnet-py)  | @haimkastner |
 | Golang                     | unitsnet-go | [pkg.go.dev](https://pkg.go.dev/github.com/haimkastner/unitsnet-go)  | [GitHub](https://github.com/haimkastner/unitsnet-go)  | @haimkastner |
 
+## Releases and upstream tracking
+
+The `UnitsNet` folder is a git sub-module tracking the upstream [Units.NET](https://github.com/angularsen/UnitsNet) `master` branch. The nanoFramework code in [GeneratedCode](nanoFramework.UnitsNet/GeneratedCode) is generated from it with the [code generator](nanoFramework.CodeGen) (`build.PS1`).
+
+New releases follow upstream automatically:
+
+1. The [Sync upstream Units.NET release](.github/workflows/sync-upstream-release.yml) workflow runs daily and looks for a new **stable** upstream `UnitsNet/*` release ahead of the sub-module.
+2. When one is found, it updates the sub-module, sets `version.json` to the upstream major.minor version, regenerates the code and opens a PR with the upstream release notes, with auto-merge enabled.
+3. Once merged, the build publishes the NuGet packages and creates the GitHub release.
+4. The release notes include the upstream Units.NET release notes along with the changes made in this repository.
+
+The workflow can also be started manually, optionally with a specific upstream tag, including pre-releases. For pre-releases `version.json` is not changed.
+
 ## Feedback and documentation
 
 For documentation, providing feedback, issues and finding out how to contribute please refer to the [Home repo](https://github.com/nanoframework/Home).

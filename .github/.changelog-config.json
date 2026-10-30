@@ -37,7 +37,7 @@
         }
     ],
     "sort": "ASC",
-    "template": "${{CHANGELOG}}\n\n**Full Changelog:** ${{RELEASE_DIFF}}\n\nThe following NuGet package is available from this release:\n\n:package: [System.Math](https://www.nuget.org/packages/nanoFramework.System.Math/)",
+    "template": "${{CHANGELOG}}\n\n**Full Changelog:** ${{RELEASE_DIFF}}\n\nThe following NuGet packages are available from this release:\n\n:package: [nanoFramework.UnitsNet](https://www.nuget.org/packages?q=nanoFramework.UnitsNet)",
     "pr_template": "* ${{TITLE}} by @${{AUTHOR}} in #${{NUMBER}}",
     "empty_template": "- no changes",
     "max_tags_to_fetch": 200,
